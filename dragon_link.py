@@ -77,12 +77,12 @@ def change_id_dragonlink(in_id: int):
     print("Return Code:", res.returncode)
 
     if res.returncode == 0:
-        print(f"Worked! Injected ID = {in_id} to {dl_usb_hex} dragonlink")
+        print(f"Worked! Injected ID = [{in_id}] to {dl_usb_hex} dragonlink")
     else:
         print(f"Failed err code == {res.returncode}\nUSB driver replay requires root did you run with sudo?")
 
 def main():
-    change_id_dragonlink(334)
+    change_id_dragonlink(123)
 
 if __name__ == "__main__":
     main()
