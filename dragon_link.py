@@ -37,20 +37,30 @@ def create_user_id_packet(input_filename, output_filename, find_str, hex_str):
     with open(output_filename, 'w') as output_file:
         output_file.write(modified_content)
 
+# dl is dragon link
 def int_to_dl_packet_format(n: int):
     if n > 999 or n < 0:
         raise ValueError("The max value supported by my shitty math is 999")
     if n <= 255:
         return hex(n)[2:]
 
-    # remove to lower digits 
-    upper = int(n / 100)
-    lower = n - upper*100
-    lower = hex(lower)[2:]
-    upper = str(upper) 
-    # print(f"{lower=} {upper=}")
+    n = str(n)
+    # example 123
+    # upper is 1 
+    upper = n[:1]
 
-    return upper + lower  
+    # lower is 23 
+    lower = n[1:]
+
+    int_lower = int(lower) 
+    if int_lower < 10:
+        return upper + lower
+
+    if int_lower <= 0xf:
+        return upper + '0' + hex(int(lower))[2:]
+
+    return upper + hex(int(lower))[2:]
+
     # sudo ./usb_replay 1fc9:0083 1.bin
 
 def inject_to_dragon_link(dl_usb_hex: str, packet_path):
@@ -63,7 +73,7 @@ def change_id_dragonlink(in_id: int):
     print(f"{dl_usb_hex=}")
     
     byte2replace = int_to_dl_packet_format(in_id)   
-    # print(f"{byte2replace=}")
+    print(f"{byte2replace=}")
 
     output_packet = 'output.txt'
     # The four-character string to find and replace from base.bin
@@ -82,7 +92,7 @@ def change_id_dragonlink(in_id: int):
         print(f"Failed err code == {res.returncode}\nUSB driver replay requires root did you run with sudo?")
 
 def main():
-    change_id_dragonlink(123)
-
+    change_id_dragonlink(707)
+    
 if __name__ == "__main__":
     main()
