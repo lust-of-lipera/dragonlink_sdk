@@ -57,9 +57,9 @@ def int_to_dl_packet_format(n: int):
         return upper + lower
 
     if int_lower <= 0xf:
-        return upper + '0' + hex(int(lower))[2:]
+        return upper + '0' + hex(int_lower)[2:]
 
-    return upper + hex(int(lower))[2:]
+    return upper + hex(int_lower)[2:]
 
     # sudo ./usb_replay 1fc9:0083 1.bin
 
