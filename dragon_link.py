@@ -53,9 +53,12 @@ def int_to_dl_packet_format(n: int):
     lower = n[1:]
 
     int_lower = int(lower) 
+    # in this case lower doesnt need hex convertion becuase its under 10
     if int_lower < 10:
         return upper + lower
 
+    # in this case when we convert to hex lets say from 11 it results in 0xa we lose a digit 
+    # thats why we need to add one 
     if int_lower <= 0xf:
         return upper + '0' + hex(int_lower)[2:]
 
@@ -92,7 +95,7 @@ def change_id_dragonlink(in_id: int):
         print(f"Failed err code == {res.returncode}\nUSB driver replay requires root did you run with sudo?")
 
 def main():
-    change_id_dragonlink(707)
+    change_id_dragonlink(321)
     
 if __name__ == "__main__":
     main()
