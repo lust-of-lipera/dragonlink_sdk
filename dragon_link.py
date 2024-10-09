@@ -73,8 +73,8 @@ def int_to_dl_packet_format(n: int):
     # sudo ./usb_replay 1fc9:0083 1.bin
 
 
-def inject_to_dragon_link(dl_usb_hex: str, packet_path):
-    command = ["sudo", "./usb_replay", dl_usb_hex, packet_path]
+def inject_to_dragon_link(arch, dl_usb_hex: str, packet_path):
+    command = ["sudo", f"./usb_replay_{arch}", dl_usb_hex, packet_path]
     return subprocess.run(command, capture_output=True, text=True)
 
 
@@ -99,7 +99,7 @@ def check_os_and_architecture():
 
 # ID > 0 && ID < 999
 def change_id_dragonlink(in_id: int):
-    check_os_and_architecture()
+    arch = check_os_and_architecture()
 
     dl_usb_hex = find_dragonlink_usb()
     print(f"{dl_usb_hex=}")
@@ -113,7 +113,7 @@ def change_id_dragonlink(in_id: int):
     # this creates output.bin
     create_user_id_packet("base.bin", output_packet, find_str, byte2replace)
 
-    res = inject_to_dragon_link(dl_usb_hex, output_packet)
+    res = inject_to_dragon_link(arch, dl_usb_hex, output_packet)
     print("STDOUT:", res.stdout)
     print("STDERR:", res.stderr)
     print("Return Code:", res.returncode)
