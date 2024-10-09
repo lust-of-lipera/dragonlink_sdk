@@ -1,8 +1,7 @@
 import subprocess
 import pyudev
 
-
-def find_dragonlink_usb():
+def find_dragonlink_usb() -> str:
     context = pyudev.Context()
     devices = context.list_devices(subsystem="usb", DEVTYPE="usb_device")
 
@@ -14,7 +13,6 @@ def find_dragonlink_usb():
         manufacturer = device.attributes.get("manufacturer", "Unknown")
         product = device.attributes.get("product", "Unknown")
 
-
         if manufacturer == b"NXP" and product == b"VCOM Port":
             print(
             f"Found USB: {bus:03d} Device {device_num:03d}: ID {vendor_id}:{product_id} {manufacturer} {product}"
@@ -24,7 +22,7 @@ def find_dragonlink_usb():
     raise Exception("Did not find dragon link usb")
 
 
-def create_user_id_packet(input_filename, output_filename, find_str, hex_str):
+def create_user_id_packet(input_filename: str, output_filename: str, find_str: str, hex_str: str):
     # Read the entire content of the input file
     with open(input_filename, "r") as input_file:
         file_content = input_file.read()
@@ -44,7 +42,7 @@ def create_user_id_packet(input_filename, output_filename, find_str, hex_str):
 
 
 # dl is dragon link
-def int_to_dl_packet_format(n: int):
+def int_to_dl_packet_format(n: int) -> str:
     if n > 999 or n < 0:
         raise ValueError("The max value supported by my shitty math is 999")
     if n <= 255:
@@ -70,10 +68,10 @@ def int_to_dl_packet_format(n: int):
 
     return upper + hex(int_lower)[2:]
 
-    # sudo ./usb_replay 1fc9:0083 1.bin
 
 
 def inject_to_dragon_link(arch, dl_usb_hex: str, packet_path):
+    # example: "sudo ./usb_replay 1fc9:0083 1.bin"
     command = ["sudo", f"./usb_replay_{arch}", dl_usb_hex, packet_path]
     return subprocess.run(command, capture_output=True, text=True)
 
@@ -96,11 +94,14 @@ def check_os_and_architecture():
 
     print("Running on supported OS and architecture.")
 
+    return machine
+
 
 # ID > 0 && ID < 999
 def change_id_dragonlink(in_id: int):
     arch = check_os_and_architecture()
-
+    print(f"{arch=}")
+    
     dl_usb_hex = find_dragonlink_usb()
     print(f"{dl_usb_hex=}")
 
@@ -125,10 +126,5 @@ def change_id_dragonlink(in_id: int):
             f"Failed err code == {res.returncode}\nUSB driver replay requires root did you run with sudo?"
         )
 
-
-def main():
-    change_id_dragonlink(321)
-
-
 if __name__ == "__main__":
-    main()
+    change_id_dragonlink(321)
